@@ -16,8 +16,8 @@ function refreshAll() {
 }
 
 export async function loginAction(formData: FormData) {
-  const ok = await login(String(formData.get("password") ?? ""));
-  redirect(ok ? "/admin" : "/admin/prihlaseni?chyba=1");
+  const result = await login(String(formData.get("password") ?? "").slice(0, 200));
+  redirect(result === "ok" ? "/admin" : `/admin/prihlaseni?chyba=${result === "blocked" ? 2 : 1}`);
 }
 
 export async function logoutAction() {

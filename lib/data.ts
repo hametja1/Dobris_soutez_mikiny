@@ -95,6 +95,12 @@ export async function listAllSubmissions(): Promise<AdminSubmission[]> {
   }));
 }
 
+/** Všechny návrhy včetně skrytých – pro strop počtu návrhů. */
+export async function countAllSubmissions(): Promise<number> {
+  const rows = await query<{ n: string }>("SELECT count(*) AS n FROM submissions");
+  return Number(rows[0]?.n ?? 0);
+}
+
 export async function countSubmissions(): Promise<number> {
   const rows = await query<{ n: string }>("SELECT count(*) AS n FROM submissions WHERE NOT hidden");
   return Number(rows[0]?.n ?? 0);

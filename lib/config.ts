@@ -22,6 +22,10 @@ export const TROOPS = [
 /** Kolik návrhů smí odevzdat jeden autor (počítáno podle jména). */
 export const MAX_SUBMISSIONS_PER_AUTHOR = 3;
 
+/** Ochrana proti zahlcení otevřeného formuláře. */
+export const MAX_SUBMISSIONS_PER_IP_HOUR = 10;
+export const MAX_SUBMISSIONS_TOTAL = 300;
+
 /** Max. velikost souboru po případném zmenšení v prohlížeči (Vercel má limit 4,5 MB na požadavek). */
 export const MAX_FILE_BYTES = 4 * 1024 * 1024;
 

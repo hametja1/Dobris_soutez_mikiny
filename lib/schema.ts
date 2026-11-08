@@ -36,4 +36,13 @@ CREATE TABLE IF NOT EXISTS votes (
   minus       integer REFERENCES submissions (id) ON DELETE SET NULL,
   created_at  timestamptz NOT NULL DEFAULT now()
 );
+
+-- Omezení četnosti (neúspěšná přihlášení, nahrávání). Ukládá jen otisk IP adresy.
+CREATE TABLE IF NOT EXISTS rate_events (
+  kind  text NOT NULL,
+  key   text NOT NULL,
+  at    timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS rate_events_idx ON rate_events (kind, key, at);
 `;

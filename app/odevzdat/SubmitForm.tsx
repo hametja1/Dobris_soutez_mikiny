@@ -14,7 +14,9 @@ async function shrinkImage(file: File): Promise<File> {
   const bitmap = await createImageBitmap(file).catch(() => null);
   if (!bitmap) return file;
   const longest = Math.max(bitmap.width, bitmap.height);
-  if (file.size <= MAX_FILE_BYTES && longest <= MAX_SIDE) return file;
+  // JPEG z mobilu překódujeme vždy: zahodí se tím metadata (poloha GPS, model telefonu)
+  // a fotka zůstane správně natočená i poté, co server metadata odstraní.
+  if (file.type !== "image/jpeg" && file.size <= MAX_FILE_BYTES && longest <= MAX_SIDE) return file;
 
   const scale = Math.min(1, MAX_SIDE / longest);
   const canvas = document.createElement("canvas");

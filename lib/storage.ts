@@ -12,18 +12,19 @@ import { randomUUID } from "node:crypto";
 const LOCAL_DIR = path.join(process.cwd(), ".data", "uploads");
 const useBlob = () => Boolean(process.env.BLOB_READ_WRITE_TOKEN);
 
-export async function saveFile(file: File, extension: string): Promise<string> {
+export async function saveFile(data: Uint8Array, contentType: string, extension: string): Promise<string> {
   const name = `navrh-${randomUUID()}.${extension}`;
+  const body = Buffer.from(data);
   if (useBlob()) {
-    const blob = await put(`navrhy/${name}`, file, {
+    const blob = await put(`navrhy/${name}`, body, {
       access: "public",
-      contentType: file.type,
+      contentType,
       addRandomSuffix: false,
     });
     return blob.url;
   }
   await mkdir(LOCAL_DIR, { recursive: true });
-  await writeFile(path.join(LOCAL_DIR, name), Buffer.from(await file.arrayBuffer()));
+  await writeFile(path.join(LOCAL_DIR, name), body);
   return `/api/local-file/${name}`;
 }
 

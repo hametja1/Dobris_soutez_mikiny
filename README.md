@@ -45,7 +45,8 @@ termín zobrazí. Fázi ale vždy přepínáte ručně.
 4. **Úložiště souborů.** Ve stejné záložce zvolte *Create → Blob*, propojte s projektem. Vercel nastaví
    `BLOB_READ_WRITE_TOKEN`. Pokud se při zakládání ptá na přístup, zvolte veřejný (*public*) – soubory
    mají náhodné, neuhodnutelné adresy a osobní údaje v nich nejsou.
-5. **Heslo do správy.** *Settings → Environment Variables* → přidejte `ADMIN_PASSWORD` (alespoň 6 znaků).
+5. **Heslo do správy.** *Settings → Environment Variables* → přidejte `ADMIN_PASSWORD` (alespoň 12 znaků,
+   ideálně náhodná fráze, kterou nepoužíváte jinde).
 6. **Znovu nasaďte.** *Deployments → … → Redeploy*, aby se nové proměnné načetly.
 7. **Vyzkoušejte.** Otevřete `/admin`, přihlaste se, přepněte na *Odevzdávání*, nahrajte zkušební návrh,
    přepněte na *Hlasování* a zahlasujte. Pak testovací návrhy smažte, tlačítkem *Smazat všechny hlasy*
@@ -107,6 +108,20 @@ lib/
   auth.ts                  přihlášení správce
   settings.ts, time.ts     fáze, termíny, pražský čas
 ```
+
+## Zabezpečení
+
+- **Nahrané soubory:** typ se ověřuje podle obsahu souboru (ne podle přípony) a z obrázků i PDF se mažou
+  metadata – poloha GPS z fotek, jméno autora, model telefonu, autor PDF. Galerie tak zůstává anonymní.
+- **Správa:** heslo alespoň 12 znaků; po 5 špatných pokusech z jedné adresy (nebo 30 celkem) se přihlášení
+  na 15 minut zablokuje. Přihlášení platí 14 dní, cookie je `httpOnly` a `SameSite=Strict`. Všechny akce
+  správy ověřují přihlášení na serveru.
+- **Otevřený formulář:** nejvýše 10 nahrání za hodinu z jedné adresy a 300 návrhů celkem
+  (`lib/config.ts`). Ukládá se jen otisk IP adresy, ne adresa.
+- **Export CSV:** buňky začínající `=`, `+`, `-` nebo `@` se zneškodní, aby je Excel nespustil jako vzorec.
+- **Hlavičky:** Content-Security-Policy, zákaz vkládání do cizích stránek, `nosniff` (viz `next.config.ts`).
+- **Databáze:** spojení přes TLS s ověřením certifikátu.
+- **Hlasování** záměrně stojí na důvěře – omezení jedním zařízením je ochrana proti omylu, ne proti podvodu.
 
 ## Osobní údaje
 

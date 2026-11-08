@@ -4,7 +4,9 @@ import { getResults, listAllSubmissions } from "@/lib/data";
 export const dynamic = "force-dynamic";
 
 function csvCell(v: unknown): string {
-  const s = v === null || v === undefined ? "" : String(v);
+  let s = v === null || v === undefined ? "" : String(v);
+  // Text začínající = + - @ by Excel spustil jako vzorec (např. odkaz, který odešle data jinam).
+  if (/^[=+\-@\t\r]/.test(s)) s = "'" + s;
   return /[";\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
 }
 

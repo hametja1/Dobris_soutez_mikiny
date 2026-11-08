@@ -18,7 +18,7 @@ function getPool(): Pool {
     globalForDb.pgPool = new Pool({
       connectionString,
       max: 3,
-      ssl: isLocal ? undefined : { rejectUnauthorized: false },
+      ssl: isLocal ? undefined : { rejectUnauthorized: true },
     });
   }
   return globalForDb.pgPool;
