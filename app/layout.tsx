@@ -27,9 +27,10 @@ async function currentPhase(): Promise<Phase | null> {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   // Skryté stránky zůstávají dostupné na přímou adresu, jen nejsou v menu.
   const phase = await currentPhase();
-  const showGallery = phase === null || phase === "submissions";
+  const showGallery = phase === null || phase === "submissions" || phase === "results";
   const showSubmit = phase !== "voting" && phase !== "results";
   const showVoting = phase !== "submissions" && phase !== "results";
+  const showResults = phase !== "submissions" && phase !== "voting";
 
   return (
     <html lang="cs">
@@ -54,7 +55,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               {showGallery && <Link href="/navrhy">Návrhy</Link>}
               {showSubmit && <Link href="/odevzdat">Odevzdat návrh</Link>}
               {showVoting && <Link href="/hlasovani">Hlasování</Link>}
-              <Link href="/vysledky">Výsledky</Link>
+              {showResults && <Link href="/vysledky">Výsledky</Link>}
             </nav>
           </div>
         </header>
