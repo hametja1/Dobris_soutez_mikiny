@@ -36,6 +36,7 @@ async function shrinkImage(file: File): Promise<File> {
 
 export default function SubmitForm({ troops }: { troops: string[] }) {
   const formRef = useRef<HTMLFormElement>(null);
+  const successRef = useRef<HTMLDivElement>(null);
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -52,6 +53,12 @@ export default function SubmitForm({ troops }: { troops: string[] }) {
     setPreview(url);
     return () => URL.revokeObjectURL(url);
   }, [file]);
+
+  // Po odeslání se formulář skryje; posuneme stránku ke zprávě o úspěchu,
+  // jinak by uživatel zůstal dole u patičky.
+  useEffect(() => {
+    if (result) successRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [result]);
 
   async function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     setError(null);
@@ -104,26 +111,21 @@ export default function SubmitForm({ troops }: { troops: string[] }) {
     setResult(null);
   }
 
-  // Stejnou zprávu ukazujeme nahoře i pod tlačítkem, aby ji uživatel viděl bez posouvání.
-  // Čtečkám obrazovky ji ohlásíme jen jednou (role="status" má jen horní kopie).
-  const successBox = (announce: boolean) =>
-    result && (
-      <div className="success" role={announce ? "status" : undefined}>
-        <h2 style={{ marginTop: 0 }}>Díky, návrh je odevzdaný!</h2>
-        <p>V galerii pro hlasování bude mít číslo <strong>{result.number}</strong>.</p>
-        {result.remaining > 0 ? (
-          <button type="button" className="btn" onClick={another}>
-            Odevzdat další návrh (zbývá {result.remaining})
-          </button>
-        ) : (
-          <p>Tím jste odevzdali maximální počet návrhů.</p>
-        )}
-      </div>
-    );
-
   return (
     <>
-      {result && successBox(true)}
+      {result && (
+        <div ref={successRef} className="success" role="status">
+          <h2 style={{ marginTop: 0 }}>Díky, návrh je odevzdaný!</h2>
+          <p>V galerii pro hlasování bude mít číslo <strong>{result.number}</strong>.</p>
+          {result.remaining > 0 ? (
+            <button type="button" className="btn" onClick={another}>
+              Odevzdat další návrh (zbývá {result.remaining})
+            </button>
+          ) : (
+            <p>Tím jste odevzdali maximální počet návrhů.</p>
+          )}
+        </div>
+      )}
 
       <form ref={formRef} className="form" onSubmit={onSubmit} hidden={Boolean(result)}>
         <div className="field">
@@ -178,8 +180,6 @@ export default function SubmitForm({ troops }: { troops: string[] }) {
             {busy ? "Odesílám…" : preparing ? "Připravuji obrázek…" : "Odevzdat návrh"}
           </button>
         </div>
-
-        {result && successBox(false)}
       </form>
     </>
   );

@@ -126,6 +126,7 @@ main { padding: 32px 0 64px; }
 
 /* Formuláře */
 .form { display: grid; gap: 18px; max-width: 640px; }
+.form[hidden] { display: none; }
 .field { display: grid; gap: 6px; }
 .field label { font-weight: 700; color: var(--navy); }
 .field .hint { font-size: 14px; color: var(--muted); }
