@@ -104,21 +104,26 @@ export default function SubmitForm({ troops }: { troops: string[] }) {
     setResult(null);
   }
 
+  // Stejnou zprávu ukazujeme nahoře i pod tlačítkem, aby ji uživatel viděl bez posouvání.
+  // Čtečkám obrazovky ji ohlásíme jen jednou (role="status" má jen horní kopie).
+  const successBox = (announce: boolean) =>
+    result && (
+      <div className="success" role={announce ? "status" : undefined}>
+        <h2 style={{ marginTop: 0 }}>Díky, návrh je odevzdaný!</h2>
+        <p>V galerii pro hlasování bude mít číslo <strong>{result.number}</strong>.</p>
+        {result.remaining > 0 ? (
+          <button type="button" className="btn" onClick={another}>
+            Odevzdat další návrh (zbývá {result.remaining})
+          </button>
+        ) : (
+          <p>Tím jste odevzdali maximální počet návrhů.</p>
+        )}
+      </div>
+    );
+
   return (
     <>
-      {result && (
-        <div className="success" role="status">
-          <h2 style={{ marginTop: 0 }}>Díky, návrh je odevzdaný!</h2>
-          <p>V galerii pro hlasování bude mít číslo <strong>{result.number}</strong>.</p>
-          {result.remaining > 0 ? (
-            <button type="button" className="btn" onClick={another}>
-              Odevzdat další návrh (zbývá {result.remaining})
-            </button>
-          ) : (
-            <p>Tím jste odevzdali maximální počet návrhů.</p>
-          )}
-        </div>
-      )}
+      {result && successBox(true)}
 
       <form ref={formRef} className="form" onSubmit={onSubmit} hidden={Boolean(result)}>
         <div className="field">
@@ -173,6 +178,8 @@ export default function SubmitForm({ troops }: { troops: string[] }) {
             {busy ? "Odesílám…" : preparing ? "Připravuji obrázek…" : "Odevzdat návrh"}
           </button>
         </div>
+
+        {result && successBox(false)}
       </form>
     </>
   );
