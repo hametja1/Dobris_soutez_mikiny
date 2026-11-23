@@ -13,8 +13,12 @@ export default async function VotingPage() {
       <>
         <h1>Hlasování</h1>
         <div className="notice">
-          {(settings.phase === "preparation" || settings.phase === "submissions") && (
-            <p>Hlasování ještě nezačalo. Galerie návrhů se zobrazí, až skončí odevzdávání.</p>
+          {settings.phase === "preparation" && <p>Hlasování ještě nezačalo.</p>}
+          {settings.phase === "submissions" && (
+            <p>
+              Hlasování začne, až skončí odevzdávání. Zatím si můžete{" "}
+              <Link href="/navrhy">prohlédnout odevzdané návrhy</Link>.
+            </p>
           )}
           {settings.phase === "voting" && <p>Termín hlasování už vypršel. Výsledky budou brzy zveřejněny.</p>}
           {settings.phase === "results" && (

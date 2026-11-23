@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import Link from "next/link";
-import { CONTEST } from "@/lib/config";
+import { CONTEST, type Phase } from "@/lib/config";
+import { getSettings } from "@/lib/settings";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -9,9 +10,27 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
+// Menu závisí na aktuální fázi soutěže, proto se layout vykresluje při každém požadavku.
+export const dynamic = "force-dynamic";
+
 export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#2d4a87" };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+/** Fáze soutěže pro horní menu; když databáze neodpoví, ukážeme všechny odkazy. */
+async function currentPhase(): Promise<Phase | null> {
+  try {
+    return (await getSettings()).phase;
+  } catch {
+    return null;
+  }
+}
+
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  // Skryté stránky zůstávají dostupné na přímou adresu, jen nejsou v menu.
+  const phase = await currentPhase();
+  const showGallery = phase === null || phase === "submissions";
+  const showSubmit = phase !== "voting" && phase !== "results";
+  const showVoting = phase !== "submissions" && phase !== "results";
+
   return (
     <html lang="cs">
       <head>
@@ -32,8 +51,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </Link>
             <nav className="nav" aria-label="Hlavní navigace">
               <Link href="/">Pravidla</Link>
-              <Link href="/odevzdat">Odevzdat návrh</Link>
-              <Link href="/hlasovani">Hlasování</Link>
+              {showGallery && <Link href="/navrhy">Návrhy</Link>}
+              {showSubmit && <Link href="/odevzdat">Odevzdat návrh</Link>}
+              {showVoting && <Link href="/hlasovani">Hlasování</Link>}
               <Link href="/vysledky">Výsledky</Link>
             </nav>
           </div>

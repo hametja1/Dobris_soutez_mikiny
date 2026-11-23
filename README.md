@@ -93,6 +93,7 @@ docker run -d --name mikiny-db -e POSTGRES_PASSWORD=heslo -e POSTGRES_DB=mikiny 
 ```
 app/
   page.tsx                 úvod a pravidla
+  navrhy/                  galerie odevzdaných návrhů bez hlasování
   odevzdat/                formulář pro odevzdání (zmenšení fotek v prohlížeči)
   hlasovani/               galerie, výběr hlasů, serverová akce castVote
   vysledky/                veřejné výsledky
