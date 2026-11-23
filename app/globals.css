@@ -158,6 +158,8 @@ input[type="radio"], input[type="checkbox"] { accent-color: var(--navy); }
 .entry-desc { font-size: 15px; color: var(--muted); margin: 0; }
 .vote-buttons { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; }
 .vote-buttons .btn { flex: 1 1 auto; }
+.vote-buttons .btn.icon-btn { flex: 0 0 auto; min-width: 36px; padding: 6px 10px; }
+.btn.danger.is-on { background: var(--danger); color: #fff; }
 
 /* Lišta s hlasem */
 .vote-bar { position: sticky; bottom: 0; z-index: 5; margin-top: 24px; background: var(--navy); color: #e9eef8; border-top: 4px solid var(--yellow); border-radius: var(--radius) var(--radius) 0 0; padding: 14px 18px; display: flex; flex-wrap: wrap; gap: 10px 20px; align-items: center; justify-content: space-between; box-shadow: 0 -6px 20px rgba(20, 30, 60, 0.18); }

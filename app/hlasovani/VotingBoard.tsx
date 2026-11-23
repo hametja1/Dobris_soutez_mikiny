@@ -57,20 +57,32 @@ export default function VotingBoard({ submissions }: { submissions: PublicSubmis
   const plusCount = (id: number) => plus.filter((p) => p === id).length;
   const label = (id: number) => `č. ${byId.get(id)?.number}`;
 
-  function addPlus(id: number) {
+  /** Hlasy pro bez daného návrhu; hlas proti jde jen spolu s oběma hlasy pro. */
+  function withoutPlus(id: number) {
+    const next = plus.filter((p) => p !== id);
+    setPlus(next);
+    return next;
+  }
+  function togglePlus(id: number) {
+    if (plusCount(id) > 0) {
+      if (withoutPlus(id).length < 2) setMinus(null);
+      return;
+    }
     if (plus.length >= 2) return;
     setPlus([...plus, id]);
     if (minus === id) setMinus(null);
   }
-  function removePlus(id: number) {
-    const i = plus.indexOf(id);
-    if (i === -1) return;
-    const next = [...plus.slice(0, i), ...plus.slice(i + 1)];
-    setPlus(next);
-    if (next.length < 2) setMinus(null); // hlas proti jde jen spolu s oběma hlasy pro
+  function addSecondPlus(id: number) {
+    if (plus.length >= 2) return;
+    setPlus([...plus, id]);
   }
   function toggleMinus(id: number) {
     setMinus(minus === id ? null : id);
+  }
+  /** Křížek: zruší všechny hlasy (pro i proti) u jednoho návrhu. */
+  function clearEntry(id: number) {
+    const next = withoutPlus(id);
+    if (minus === id || next.length < 2) setMinus(null);
   }
 
   function submit() {
@@ -126,24 +138,54 @@ export default function VotingBoard({ submissions }: { submissions: PublicSubmis
                 </div>
                 {s.description && <p className="entry-desc">{s.description}</p>}
                 <div className="vote-buttons">
-                  <button type="button" className="btn small-btn" onClick={() => addPlus(id)} disabled={plus.length >= 2}>
+                  <button
+                    type="button"
+                    className={`btn small-btn${pc > 0 ? "" : " secondary"}`}
+                    onClick={() => togglePlus(id)}
+                    disabled={pc === 0 && plus.length >= 2}
+                    aria-pressed={pc > 0}
+                    title={pc > 0 ? "Kliknutím hlas pro zrušíte." : undefined}
+                  >
                     + Pro
                   </button>
-                  {pc > 0 && (
-                    <button type="button" className="btn secondary small-btn" onClick={() => removePlus(id)}>
-                      Vrátit +
+                  {pc === 1 && plus.length < 2 && (
+                    <button
+                      type="button"
+                      className="btn secondary small-btn icon-btn"
+                      onClick={() => addSecondPlus(id)}
+                      aria-label={`Dát návrhu č. ${s.number} i druhý hlas pro`}
+                      title="Dát i druhý hlas pro"
+                    >
+                      +1
                     </button>
                   )}
                   <button
                     type="button"
-                    className={`btn small-btn ${isMinus ? "" : "danger"}`}
-                    style={isMinus ? { background: "var(--danger)", borderColor: "var(--danger)" } : undefined}
+                    className={`btn danger small-btn${isMinus ? " is-on" : ""}`}
                     onClick={() => toggleMinus(id)}
                     disabled={!minusAllowed || pc > 0}
-                    title={!minusAllowed ? "Hlas proti můžete dát až po rozdání obou hlasů pro." : undefined}
+                    aria-pressed={isMinus}
+                    title={
+                      !minusAllowed
+                        ? "Hlas proti můžete dát až po rozdání obou hlasů pro."
+                        : isMinus
+                          ? "Kliknutím hlas proti zrušíte."
+                          : undefined
+                    }
                   >
-                    {isMinus ? "Zrušit −" : "− Proti"}
+                    − Proti
                   </button>
+                  {(pc > 0 || isMinus) && (
+                    <button
+                      type="button"
+                      className="btn secondary small-btn icon-btn"
+                      onClick={() => clearEntry(id)}
+                      aria-label={`Zrušit hlasy u návrhu č. ${s.number}`}
+                      title="Zrušit hlasy u tohoto návrhu"
+                    >
+                      ✕
+                    </button>
+                  )}
                 </div>
               </div>
             </article>
