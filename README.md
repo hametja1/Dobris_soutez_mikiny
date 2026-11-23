@@ -43,7 +43,7 @@ termín zobrazí. Fázi ale vždy přepínáte ručně.
    Propojte ji s projektem. Vercel sám nastaví proměnnou `DATABASE_URL`. Tabulky si aplikace vytvoří
    sama při prvním spuštění.
 4. **Úložiště souborů.** Ve stejné záložce zvolte *Create → Blob*, propojte s projektem. Vercel nastaví
-   `BLOB_READ_WRITE_TOKEN`. Pokud se při zakládání ptá na přístup, zvolte veřejný (*public*) – soubory
+   `BLOB_STORE_ID` (u starších úložišť `BLOB_READ_WRITE_TOKEN`). Pokud se při zakládání ptá na přístup, zvolte veřejný (*public*) – soubory
    mají náhodné, neuhodnutelné adresy a osobní údaje v nich nejsou.
 5. **Heslo do správy.** *Settings → Environment Variables* → přidejte `ADMIN_PASSWORD` (alespoň 12 znaků,
    ideálně náhodná fráze, kterou nepoužíváte jinde).

@@ -11,7 +11,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
       <h1>Správa soutěže</h1>
       {!isAdminConfigured() ? (
         <div className="notice">
-          Správa zatím není nastavená. Na Vercelu přidejte proměnnou prostředí <code>ADMIN_PASSWORD</code> (alespoň
+          Správa zatím není nastavená. Na Vercelu přidejte proměnnou prostředí <code>ADMIN_PASSWORD</code> (alespoň{" "}
           {ADMIN_PASSWORD_MIN_LENGTH} znaků) a aplikaci znovu nasaďte.
         </div>
       ) : (

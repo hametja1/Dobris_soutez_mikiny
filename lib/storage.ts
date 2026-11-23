@@ -5,12 +5,13 @@ import { randomUUID } from "node:crypto";
 
 /**
  * Ukládání souborů s návrhy.
- * - Na Vercelu do Vercel Blob (proměnná BLOB_READ_WRITE_TOKEN dodá integrace Blob).
+ * - Na Vercelu do Vercel Blob. Integrace Blob nastaví BLOB_STORE_ID (přihlášení přes OIDC Vercelu),
+ *   starší úložiště místo toho BLOB_READ_WRITE_TOKEN – knihovna @vercel/blob umí obojí.
  * - Lokálně bez tokenu do složky .data/uploads, soubory pak servíruje /api/local-file.
  */
 
 const LOCAL_DIR = path.join(process.cwd(), ".data", "uploads");
-const useBlob = () => Boolean(process.env.BLOB_READ_WRITE_TOKEN);
+const useBlob = () => Boolean(process.env.BLOB_STORE_ID || process.env.BLOB_READ_WRITE_TOKEN);
 
 export async function saveFile(data: Uint8Array, contentType: string, extension: string): Promise<string> {
   const name = `navrh-${randomUUID()}.${extension}`;
